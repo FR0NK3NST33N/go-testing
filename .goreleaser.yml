@@ -13,7 +13,7 @@ before:
 builds:
   - <<: &build_defaults
       binary: bin/gotesting
-      main: ./main
+      main: ./
       ldflags:
         - -s -w -X github.com/FR0NK3NST33N/go-testing/root.Version={{.Version}} -X github.com/FR0NK3NST33N/go-testing/root.BuildDate={{time "2006-01-02"}}
         - -X main.updaterEnabled=cli/cli
