@@ -12,6 +12,6 @@ var HelloCmd = &cobra.Command{
 	Short: "Welcome message",
 	Long:  `Respond with a welcome message`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("Hello, friend!")
+		fmt.Println("Hello, friend! Updated")
 	},
 }
