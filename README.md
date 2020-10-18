@@ -1,3 +1,3 @@
 # Go Build Testing
 
-// comment
+<!-- comment -->
