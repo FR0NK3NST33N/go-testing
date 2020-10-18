@@ -1,0 +1,64 @@
+name: goreleaser
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Go 1.13
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.13
+      - name: Generate changelog
+        run: |
+          echo ::set-env name=GORELEASER_CURRENT_TAG::${GITHUB_REF#refs/tags/}
+          git fetch --unshallow
+          script/changelog | tee CHANGELOG.md
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          version: latest
+          args: release --release-notes=CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+  msi:
+    needs: goreleaser
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download gotesting.exe
+        id: download_exe
+        shell: bash
+        run: |
+          hub release download "${GITHUB_REF#refs/tags/}" -i '*windows_amd64*.zip'
+          printf "::set-output name=zip::%s\n" *.zip
+          unzip -o *.zip && rm -v *.zip
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - name: Install go-msi
+        run: choco install -y "go-msi"
+      - name: Prepare PATH
+        shell: bash
+        run: |
+          echo "::add-path::$WIX\\bin"
+          echo "::add-path::C:\\Program Files\\go-msi"
+      - name: Build MSI
+        id: buildmsi
+        shell: bash
+        run: |
+          mkdir -p build
+          msi="$(basename "${{ steps.download_exe.outputs.zip }}" ".zip").msi"
+          printf "::set-output name=msi::%s\n" "$msi"
+          go-msi make --msi "$PWD/$msi" --out "$PWD/build" --version "${GITHUB_REF#refs/tags/}"
+      - name: Upload MSI
+        shell: bash
+        run: hub release edit "${GITHUB_REF#refs/tags/}" -m "" --draft=false -a "${{ steps.buildmsi.outputs.msi }}"
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

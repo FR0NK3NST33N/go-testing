@@ -1,7 +1,7 @@
 package main
 
-import "fmt"
+import "github.com/FR0NK3NST33N/go-testing/cmd/root"
 
 func main() {
-	fmt.Println("Hello, friend")
+	root.Execute()
 }
