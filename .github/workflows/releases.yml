@@ -15,16 +15,16 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.13
-      - name: Generate changelog
-        run: |
-          echo ::set-env name=GORELEASER_CURRENT_TAG::${GITHUB_REF#refs/tags/}
-          git fetch --unshallow
-          script/changelog | tee CHANGELOG.md
+      # - name: Generate changelog
+      #   run: |
+      #     echo ::set-env name=GORELEASER_CURRENT_TAG::${GITHUB_REF#refs/tags/}
+      #     git fetch --unshallow
+      #     script/changelog | tee CHANGELOG.md
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
           version: latest
-          args: release --release-notes=CHANGELOG.md
+          args: release #--release-notes=CHANGELOG.md
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
   msi:
