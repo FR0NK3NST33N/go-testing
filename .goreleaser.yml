@@ -8,7 +8,7 @@ release:
 before:
   hooks:
     - go mod tidy
-    - make manpages
+    #- make manpages
 
 builds:
   - <<: &build_defaults
@@ -42,7 +42,7 @@ archives:
     format: tar.gz
     files:
       - LICENSE
-      - ./share/man/man1/gh*.1
+      #- ./share/man/man1/gh*.1
   - id: windows
     builds: [windows]
     <<: *archive_defaults

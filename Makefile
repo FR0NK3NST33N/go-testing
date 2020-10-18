@@ -30,6 +30,6 @@ clean:
 .PHONY: clean
 
 
-.PHONY: manpages
-manpages:
-	go run ./cmd/gen-docs --man-page --doc-path ./share/man/man1/
+# .PHONY: manpages
+# manpages:
+# 	go run ./cmd/gen-docs --man-page --doc-path ./share/man/man1/
